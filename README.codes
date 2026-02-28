@@ -1,0 +1,269 @@
+# --------------------------------------------------
+# Credit Card Spending Analysis in India
+# --------------------------------------------------
+# Author: [George Ejembi - Data Analyst]
+# Description:
+# Exploratory and segmented analysis of credit card
+# spending behavior across cities, gender, card types,
+# expense categories, and time.
+# --------------------------------------------------
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+from pathlib import Path
+
+# --------------------------------------------------
+# Configuration and Setup
+# --------------------------------------------------
+plt.style.use("default")
+sns.set_palette("husl")
+
+file_path = Path(
+    r"C:\Users\USER\Downloads\BIGFARMER DATABASE\Datasets!\Credit Card Spending in India.csv"
+)
+
+# --------------------------------------------------
+# Data Loading with Robust Error Handling
+# --------------------------------------------------
+def load_credit_card_data(file_path: Path):
+    """
+    Loads the credit card dataset using multiple encoding
+    and delimiter attempts for maximum compatibility.
+    """
+    if not file_path.exists():
+        print(f"❌ File not found: {file_path}")
+        print(f"Working directory: {os.getcwd()}")
+        return None
+
+    encodings = ["utf-8", "latin1", "iso-8859-1", "cp1252"]
+    separators = [",", ";", "\t"]
+
+    for encoding in encodings:
+        for sep in separators:
+            try:
+                df = pd.read_csv(file_path, encoding=encoding, sep=sep)
+                print(f"✅ Loaded using encoding='{encoding}', separator='{sep}'")
+                print(f"Dataset shape: {df.shape}")
+                return df
+            except (UnicodeDecodeError, pd.errors.ParserError):
+                continue
+
+    print("❌ Failed to load dataset with available encodings.")
+    return None
+
+
+df = load_credit_card_data(file_path)
+if df is None:
+    raise SystemExit("Dataset loading failed.")
+
+# --------------------------------------------------
+# Data Exploration
+# --------------------------------------------------
+print("\n" + "=" * 60)
+print("DATA OVERVIEW")
+print("=" * 60)
+
+print("\nFirst 5 rows:")
+print(df.head())
+
+print("\nLast 5 rows:")
+print(df.tail())
+
+print(f"\nDataset Size: {df.shape[0]} rows × {df.shape[1]} columns")
+
+print("\nDataset Info:")
+df.info()
+
+print("\nMissing Values per Column:")
+print(df.isnull().sum())
+
+print("\nDescriptive Statistics:")
+print(df.describe())
+
+# --------------------------------------------------
+# Data Preprocessing
+# --------------------------------------------------
+print("\n" + "=" * 60)
+print("DATA PREPROCESSING")
+print("=" * 60)
+
+df.columns = df.columns.str.lower().str.strip().str.replace(" ", "_")
+print("Standardized Columns:", df.columns.tolist())
+
+# Detect key columns programmatically
+date_columns = [c for c in df.columns if "date" in c]
+amount_columns = [c for c in df.columns if "amount" in c or "spend" in c]
+
+date_col = date_columns[0] if date_columns else None
+amount_col = amount_columns[0] if amount_columns else None
+
+if date_col:
+    df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
+    print(f"✔ Converted '{date_col}' to datetime")
+
+if amount_col:
+    df[amount_col] = pd.to_numeric(df[amount_col], errors="coerce")
+    print(f"✔ Converted '{amount_col}' to numeric")
+
+critical_cols = [c for c in [date_col, amount_col] if c]
+df_clean = df.dropna(subset=critical_cols)
+
+print(f"✔ Removed {df.shape[0] - df_clean.shape[0]} incomplete records")
+
+# --------------------------------------------------
+# Analysis Functions
+# --------------------------------------------------
+print("\n" + "=" * 60)
+print("DATA ANALYSIS")
+print("=" * 60)
+
+def analyze_city_spending(df, amount_col, top_n=10):
+    """Analyzes total, average, and frequency of spending by city."""
+    if "city" not in df.columns:
+        print("⚠ City column not found.")
+        return None
+
+    city_spending = (
+        df.groupby("city")[amount_col]
+        .agg(total="sum", mean="mean", count="count")
+        .round(2)
+        .sort_values("total", ascending=False)
+    )
+
+    print(f"\nTop {top_n} Cities by Total Spending:")
+    print(city_spending.head(top_n))
+
+    plt.figure(figsize=(12, 6))
+    city_spending.head(top_n)["total"].plot(kind="bar", edgecolor="black")
+    plt.title("Top Cities by Credit Card Spending", fontweight="bold")
+    plt.ylabel("Total Amount (₹)")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
+
+    return city_spending
+
+
+def analyze_monthly_trends(df, date_col, amount_col):
+    """Examines temporal spending trends on a monthly basis."""
+    monthly_spending = df.set_index(date_col).resample("M")[amount_col].sum()
+
+    print("\nMonthly Spending Statistics:")
+    print(f"Average: ₹{monthly_spending.mean():,.2f}")
+    print(f"Maximum: ₹{monthly_spending.max():,.2f}")
+    print(f"Minimum: ₹{monthly_spending.min():,.2f}")
+
+    plt.figure(figsize=(14, 6))
+    plt.plot(monthly_spending.index, monthly_spending.values, marker="o")
+    plt.title("Monthly Credit Card Spending Trend", fontweight="bold")
+    plt.ylabel("Total Amount (₹)")
+    plt.grid(alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+
+    return monthly_spending
+
+
+def analyze_expense_categories(df, amount_col, top_n=10):
+    """Analyzes spending patterns across expense categories."""
+    expense_col = next((c for c in df.columns if "exp" in c or "type" in c), None)
+    if not expense_col:
+        print("⚠ Expense category column not found.")
+        return None
+
+    expense_summary = (
+        df.groupby(expense_col)[amount_col]
+        .agg(total="sum", mean="mean", count="count")
+        .round(2)
+        .sort_values("total", ascending=False)
+    )
+
+    print("\nTop Expense Categories:")
+    print(expense_summary.head(top_n))
+
+    plt.figure(figsize=(12, 6))
+    expense_summary.head(top_n)["total"].plot(kind="bar", edgecolor="black")
+    plt.title("Spending by Expense Category", fontweight="bold")
+    plt.ylabel("Total Amount (₹)")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.show()
+
+    return expense_summary
+
+
+def analyze_card_types(df, amount_col):
+    """Evaluates spending behavior by card type."""
+    card_col = next((c for c in df.columns if "card" in c and "type" in c), None)
+    if not card_col:
+        print("⚠ Card type column not found.")
+        return None
+
+    card_summary = (
+        df.groupby(card_col)[amount_col]
+        .agg(["count", "mean", "median", "sum", "min", "max"])
+        .round(2)
+        .sort_values("sum", ascending=False)
+    )
+
+    print("\nCard Type Analysis:")
+    print(card_summary)
+
+    card_summary["sum"].plot(kind="bar", figsize=(10, 5), title="Total Spending by Card Type")
+    plt.ylabel("Total Amount (₹)")
+    plt.tight_layout()
+    plt.show()
+
+    return card_summary
+
+
+def analyze_gender_spending(df, amount_col):
+    """Compares spending behavior by gender."""
+    gender_col = next((c for c in df.columns if "gender" in c), None)
+    if not gender_col:
+        print("⚠ Gender column not found.")
+        return None
+
+    gender_summary = (
+        df.groupby(gender_col)[amount_col]
+        .agg(total="sum", mean="mean", count="count")
+        .round(2)
+    )
+
+    print("\nGender-Based Spending Analysis:")
+    print(gender_summary)
+
+    gender_summary["total"].plot(kind="bar", figsize=(8, 4))
+    plt.title("Total Spending by Gender", fontweight="bold")
+    plt.ylabel("Total Amount (₹)")
+    plt.tight_layout()
+    plt.show()
+
+    return gender_summary
+
+# --------------------------------------------------
+# Execute Analyses
+# --------------------------------------------------
+city_analysis = analyze_city_spending(df_clean, amount_col)
+if date_col:
+    monthly_analysis = analyze_monthly_trends(df_clean, date_col, amount_col)
+
+expense_analysis = analyze_expense_categories(df_clean, amount_col)
+card_analysis = analyze_card_types(df_clean, amount_col)
+gender_analysis = analyze_gender_spending(df_clean, amount_col)
+
+# --------------------------------------------------
+# Summary Report
+# --------------------------------------------------
+print("\n" + "=" * 60)
+print("ANALYSIS SUMMARY")
+print("=" * 60)
+
+print(f"Total Spending: ₹{df_clean[amount_col].sum():,.2f}")
+print(f"Average Transaction Value: ₹{df_clean[amount_col].mean():,.2f}")
+print(f"Total Transactions: {df_clean.shape[0]:,}")
+print(f"Unique Cities: {df_clean['city'].nunique() if 'city' in df_clean.columns else 'N/A'}")
+if date_col:
+    print(f"Date Range: {df_clean[date_col].min()} → {df_clean[date_col].max()}")
