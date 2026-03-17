@@ -1,0 +1,45 @@
+TITLE: STEP 7
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+print("=" * 60)
+print("DATA PREPROCESSING")
+print("=" * 60)
+
+# Standardize column names
+df.columns = df.columns.str.lower().str.strip().str.replace(" ", "_")
+print("Standardized Columns:", df.columns.tolist())
+
+# Detect key columns programmatically
+date_columns = [c for c in df.columns if "date" in c]
+amount_columns = [c for c in df.columns if "amount" in c or "spend" in c]
+
+date_col = date_columns[0] if date_columns else None
+amount_col = amount_columns[0] if amount_columns else None
+
+if date_col:
+    df[date_col] = pd.to_datetime(df[date_col], errors="coerce")
+    print(f"✔ Converted '{date_col}' to datetime")
+
+if amount_col:
+    df[amount_col] = pd.to_numeric(df[amount_col], errors="coerce")
+    print(f"✔ Converted '{amount_col}' to numeric")
+
+# Remove incomplete records
+critical_cols = [c for c in [date_col, amount_col] if c]
+df_clean = df.dropna(subset=critical_cols)
+
+print(f"✔ Removed {df.shape[0] - df_clean.shape[0]} incomplete records")
+print(f"✅ Clean dataset shape: {df_clean.shape}")
+
+OUTPUT:
+============================================================
+DATA PREPROCESSING
+============================================================
+Standardized Columns: ['index', 'city', 'date', 'card_type', 'exp_type', 'gender', 'amount']
+✔ Converted 'date' to datetime
+✔ Converted 'amount' to numeric
+✔ Removed 0 incomplete records
+✅ Clean dataset shape: (101, 7)
