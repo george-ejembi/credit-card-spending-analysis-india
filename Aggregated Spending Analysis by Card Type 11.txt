@@ -1,0 +1,54 @@
+TITLE: STEP 11
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def analyze_card_types(df, amount_col):
+    """Evaluates spending behavior by card type."""
+    card_col = next((c for c in df.columns if "card" in c and "type" in c), None)
+    if not card_col:
+        print("⚠ Card type column not found.")
+        return None
+
+    card_summary = (
+        df.groupby(card_col)[amount_col]
+        .agg(["count", "mean", "median", "sum", "min", "max"])
+        .round(2)
+        .sort_values(("sum"), ascending=False)
+    )
+
+    print("\n💳 Card Type Analysis:")
+    display(card_summary)
+
+    # Visualization
+    fig, axes = plt.subplots(1, 3, figsize=(18, 5))
+    
+    # Total spending
+    card_summary["sum"].plot(kind="bar", ax=axes[0], color='purple', edgecolor='black')
+    axes[0].set_title("Total Spending by Card Type", fontweight="bold", fontsize=14)
+    axes[0].set_ylabel("Total Amount (₹)")
+    axes[0].tick_params(axis='x', rotation=45)
+    axes[0].grid(axis='y', alpha=0.3)
+    
+    # Average transaction
+    card_summary["mean"].plot(kind="bar", ax=axes[1], color='coral', edgecolor='black')
+    axes[1].set_title("Average Transaction by Card Type", fontweight="bold", fontsize=14)
+    axes[1].set_ylabel("Average Amount (₹)")
+    axes[1].tick_params(axis='x', rotation=45)
+    axes[1].grid(axis='y', alpha=0.3)
+    
+    # Transaction count
+    card_summary["count"].plot(kind="bar", ax=axes[2], color='lightseagreen', edgecolor='black')
+    axes[2].set_title("Transaction Count by Card Type", fontweight="bold", fontsize=14)
+    axes[2].set_ylabel("Number of Transactions")
+    axes[2].tick_params(axis='x', rotation=45)
+    axes[2].grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+
+    return card_summary
+
+OUTPUT:
+No output captured.
