@@ -1,0 +1,92 @@
+TITLE: STEP 6
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+print("=" * 60)
+print("DATA OVERVIEW")
+print("=" * 60)
+
+print("\n📋 First 5 rows:")
+display(df.head())
+
+print("\n📋 Last 5 rows:")
+display(df.tail())
+
+print("\n📊 Dataset Info:")
+df.info()
+
+print("\n🔍 Missing Values per Column:")
+print(df.isnull().sum())
+
+print("\n📈 Descriptive Statistics:")
+display(df.describe())
+
+OUTPUT:
+============================================================
+DATA OVERVIEW
+============================================================
+
+📋 First 5 rows:
+
+   index                   City        Date  Card Type Exp Type Gender  Amount
+0      0           Delhi, India  10/29/2014       Gold    Bills      F   82475
+1      1  Greater Mumbai, India   8/22/2014   Platinum    Bills      F   32555
+2      2       Bengaluru, India   8/27/2014     Silver    Bills      F  101738
+3      3  Greater Mumbai, India   4/12/2014  Signature    Bills      F  123424
+4      4       Bengaluru, India    5/5/2015       Gold    Bills      F  171574
+
+📋 Last 5 rows:
+
+     index                   City       Date  Card Type Exp Type Gender  \
+96      96       Bengaluru, India  11/1/2013       Gold    Bills      F   
+97      97           Delhi, India  12/7/2013  Signature    Bills      F   
+98      98  Greater Mumbai, India   8/5/2014     Silver    Bills      F   
+99      99  Greater Mumbai, India   1/8/2015  Signature    Bills      F   
+100    100           Delhi, India  4/11/2015   Platinum    Bills      F   
+
+     Amount  
+96   896384  
+97   712001  
+98   246865  
+99   858729  
+100  581882  
+
+📊 Dataset Info:
+<class 'pandas.DataFrame'>
+RangeIndex: 101 entries, 0 to 100
+Data columns (total 7 columns):
+ #   Column     Non-Null Count  Dtype
+---  ------     --------------  -----
+ 0   index      101 non-null    int64
+ 1   City       101 non-null    str  
+ 2   Date       101 non-null    str  
+ 3   Card Type  101 non-null    str  
+ 4   Exp Type   101 non-null    str  
+ 5   Gender     101 non-null    str  
+ 6   Amount     101 non-null    int64
+dtypes: int64(2), str(5)
+memory usage: 5.7 KB
+
+🔍 Missing Values per Column:
+index        0
+City         0
+Date         0
+Card Type    0
+Exp Type     0
+Gender       0
+Amount       0
+dtype: int64
+
+📈 Descriptive Statistics:
+
+            index         Amount
+count  101.000000     101.000000
+mean    50.000000  517599.831683
+std     29.300171  261440.499890
+min      0.000000   19226.000000
+25%     25.000000  302834.000000
+50%     50.000000  525977.000000
+75%     75.000000  722587.000000
+max    100.000000  998077.000000
