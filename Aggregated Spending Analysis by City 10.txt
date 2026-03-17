@@ -1,0 +1,47 @@
+TITLE: STEP 10
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def analyze_expense_categories(df, amount_col, top_n=10):
+    """Analyzes spending patterns across expense categories."""
+    expense_col = next((c for c in df.columns if "exp" in c or "type" in c), None)
+    if not expense_col:
+        print("⚠ Expense category column not found.")
+        return None
+
+    expense_summary = (
+        df.groupby(expense_col)[amount_col]
+        .agg(total="sum", mean="mean", count="count")
+        .round(2)
+        .sort_values("total", ascending=False)
+    )
+
+    print("\n📊 Top Expense Categories:")
+    display(expense_summary.head(top_n))
+
+    # Visualization
+    plt.figure(figsize=(14, 6))
+    
+    plt.subplot(1, 2, 1)
+    expense_summary.head(top_n)["total"].plot(kind="bar", edgecolor="black", color='green')
+    plt.title(f"Top {top_n} Categories - Total Spending", fontweight="bold", fontsize=14)
+    plt.ylabel("Total Amount (₹)")
+    plt.xticks(rotation=45, ha="right")
+    plt.grid(axis='y', alpha=0.3)
+    
+    plt.subplot(1, 2, 2)
+    expense_summary.head(top_n)["count"].plot(kind="bar", edgecolor="black", color='orange')
+    plt.title(f"Top {top_n} Categories - Transaction Count", fontweight="bold", fontsize=14)
+    plt.ylabel("Number of Transactions")
+    plt.xticks(rotation=45, ha="right")
+    plt.grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+
+    return expense_summary
+
+OUTPUT:
+No output captured.
