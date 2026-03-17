@@ -1,0 +1,14 @@
+TITLE: STEP 2
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+plt.style.use("default")
+sns.set_palette("husl")
+%matplotlib inline
+
+print("✅ Libraries imported successfully")
+
+OUTPUT:
+✅ Libraries imported successfully
