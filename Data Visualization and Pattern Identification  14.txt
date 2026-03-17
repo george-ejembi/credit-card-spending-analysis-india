@@ -1,0 +1,40 @@
+TITLE: STEP 14
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+print("=" * 60)
+print("ANALYSIS SUMMARY")
+print("=" * 60)
+
+print(f"\n📊 KEY METRICS:")
+print(f"💰 Total Spending: ₹{df_clean[amount_col].sum():,.2f}")
+print(f"💵 Average Transaction Value: ₹{df_clean[amount_col].mean():,.2f}")
+print(f"🔄 Total Transactions: {df_clean.shape[0]:,}")
+print(f"📈 Median Transaction: ₹{df_clean[amount_col].median():,.2f}")
+print(f"📉 Min Transaction: ₹{df_clean[amount_col].min():,.2f}")
+print(f"📈 Max Transaction: ₹{df_clean[amount_col].max():,.2f}")
+
+if 'city' in df_clean.columns:
+    print(f"🏙️ Unique Cities: {df_clean['city'].nunique():,}")
+
+if date_col:
+    print(f"📅 Date Range: {df_clean[date_col].min()} → {df_clean[date_col].max()}")
+    print(f"⏱️ Time Period: {(df_clean[date_col].max() - df_clean[date_col].min()).days} days")
+
+OUTPUT:
+============================================================
+ANALYSIS SUMMARY
+============================================================
+
+📊 KEY METRICS:
+💰 Total Spending: ₹52,277,583.00
+💵 Average Transaction Value: ₹517,599.83
+🔄 Total Transactions: 101
+📈 Median Transaction: ₹525,977.00
+📉 Min Transaction: ₹19,226.00
+📈 Max Transaction: ₹998,077.00
+🏙️ Unique Cities: 4
+📅 Date Range: 2013-10-04 00:00:00 → 2015-05-13 00:00:00
+⏱️ Time Period: 586 days
