@@ -1,0 +1,19 @@
+TITLE: STEP 5
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+df = load_credit_card_data(file_path)
+if df is None:
+    raise SystemExit("Dataset loading failed.")
+
+print("\n✅ Data loaded successfully")
+print(f"Dataset Size: {df.shape[0]} rows × {df.shape[1]} columns")
+
+OUTPUT:
+✅ Loaded using encoding='utf-8', separator=','
+Dataset shape: (101, 7)
+
+✅ Data loaded successfully
+Dataset Size: 101 rows × 7 columns
