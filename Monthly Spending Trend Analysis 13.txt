@@ -1,0 +1,72 @@
+TITLE: STEP 13
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+print("=" * 60)
+print("EXECUTING DATA ANALYSIS")
+print("=" * 60)
+
+city_analysis = analyze_city_spending(df_clean, amount_col)
+
+if date_col:
+    monthly_analysis = analyze_monthly_trends(df_clean, date_col, amount_col)
+
+expense_analysis = analyze_expense_categories(df_clean, amount_col)
+card_analysis = analyze_card_types(df_clean, amount_col)
+gender_analysis = analyze_gender_spending(df_clean, amount_col)
+
+print("\n✅ All analyses completed successfully!")
+
+OUTPUT:
+============================================================
+EXECUTING DATA ANALYSIS
+============================================================
+
+🏙️ Top 10 Cities by Total Spending:
+
+                          total       mean  count
+city                                             
+Greater Mumbai, India  18069495  531455.74     34
+Delhi, India           13094797  484992.48     27
+Ahmedabad, India       11231805  561590.25     20
+Bengaluru, India        9881486  494074.30     20
+<Figure size 1400x600 with 2 Axes>
+
+📅 Monthly Spending Statistics:
+Average: ₹2,613,879.15
+Maximum: ₹5,584,386.00
+Minimum: ₹853,074.00
+Total: ₹52,277,583.00
+
+<Figure size 1600x500 with 2 Axes>
+
+📊 Top Expense Categories:
+
+              total       mean  count
+card_type                            
+Platinum   18351549  556107.55     33
+Gold       15111818  539707.79     28
+Signature  10758767  467772.48     23
+Silver      8055449  473849.94     17
+<Figure size 1400x600 with 2 Axes>
+
+💳 Card Type Analysis:
+
+           count       mean    median       sum     min     max
+card_type                                                      
+Platinum      33  556107.55  581882.0  18351549   32555  998077
+Gold          28  539707.79  513374.0  15111818   19226  991685
+Signature     23  467772.48  421878.0  10758767  123424  858729
+Silver        17  473849.94  467014.0   8055449  100036  934205
+<Figure size 1800x500 with 3 Axes>
+
+👤 Gender-Based Spending Analysis:
+
+           total       mean  count
+gender                            
+F       52277583  517599.83    101
+<Figure size 1500x500 with 3 Axes>
+
+✅ All analyses completed successfully!
