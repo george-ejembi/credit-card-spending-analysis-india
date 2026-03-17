@@ -39,6 +39,10 @@ and time to uncover meaningful consumer insights.
 - High-value segment identification (City × Card Type × Expense Type)
 
 # ▶️ How to Run the Project
+
+
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ```bash
 git clone https://github.com/your-username/credit-card-spending-analysis-india.git
 cd credit-card-spending-analysis-india
