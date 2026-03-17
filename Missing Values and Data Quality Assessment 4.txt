@@ -1,0 +1,34 @@
+TITLE: STEP 4
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def load_credit_card_data(file_path: Path):
+    """
+    Loads the credit card dataset using multiple encoding
+    and delimiter attempts for maximum compatibility.
+    """
+    if not file_path.exists():
+        print(f"❌ File not found: {file_path}")
+        print(f"Working directory: {os.getcwd()}")
+        return None
+
+    encodings = ["utf-8", "latin1", "iso-8859-1", "cp1252"]
+    separators = [",", ";", "\t"]
+
+    for encoding in encodings:
+        for sep in separators:
+            try:
+                df = pd.read_csv(file_path, encoding=encoding, sep=sep)
+                print(f"✅ Loaded using encoding='{encoding}', separator='{sep}'")
+                print(f"Dataset shape: {df.shape}")
+                return df
+            except (UnicodeDecodeError, pd.errors.ParserError):
+                continue
+
+    print("❌ Failed to load dataset with available encodings.")
+    return None
+
+OUTPUT:
+No output captured.
