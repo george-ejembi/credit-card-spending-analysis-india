@@ -1,0 +1,14 @@
+TITLE: STEP 1
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+from pathlib import Path
+
+OUTPUT:
+No output captured.
