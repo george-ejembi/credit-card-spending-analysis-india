@@ -1,0 +1,53 @@
+TITLE: STEP 12
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def analyze_gender_spending(df, amount_col):
+    """Compares spending behavior by gender."""
+    gender_col = next((c for c in df.columns if "gender" in c), None)
+    if not gender_col:
+        print("⚠ Gender column not found.")
+        return None
+
+    gender_summary = (
+        df.groupby(gender_col)[amount_col]
+        .agg(total="sum", mean="mean", count="count")
+        .round(2)
+    )
+
+    print("\n👤 Gender-Based Spending Analysis:")
+    display(gender_summary)
+
+    # Visualization
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    
+    # Total spending
+    gender_summary["total"].plot(kind="bar", ax=axes[0], color=['pink', 'lightblue'], edgecolor='black')
+    axes[0].set_title("Total Spending by Gender", fontweight="bold", fontsize=14)
+    axes[0].set_ylabel("Total Amount (₹)")
+    axes[0].tick_params(axis='x', rotation=0)
+    axes[0].grid(axis='y', alpha=0.3)
+    
+    # Average spending
+    gender_summary["mean"].plot(kind="bar", ax=axes[1], color=['pink', 'lightblue'], edgecolor='black')
+    axes[1].set_title("Average Transaction by Gender", fontweight="bold", fontsize=14)
+    axes[1].set_ylabel("Average Amount (₹)")
+    axes[1].tick_params(axis='x', rotation=0)
+    axes[1].grid(axis='y', alpha=0.3)
+    
+    # Transaction count
+    gender_summary["count"].plot(kind="bar", ax=axes[2], color=['pink', 'lightblue'], edgecolor='black')
+    axes[2].set_title("Transaction Count by Gender", fontweight="bold", fontsize=14)
+    axes[2].set_ylabel("Number of Transactions")
+    axes[2].tick_params(axis='x', rotation=0)
+    axes[2].grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+
+    return gender_summary
+
+OUTPUT:
+No output captured.
