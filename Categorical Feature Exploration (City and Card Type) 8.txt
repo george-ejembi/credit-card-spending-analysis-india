@@ -1,0 +1,62 @@
+TITLE: STEP 8
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def analyze_monthly_trends(df, date_col, amount_col):
+    """Examines temporal spending trends with a 4-panel visual dashboard."""
+    
+    # Prepare temporal features
+    df_temp = df.copy()
+    df_temp['month_name'] = df_temp[date_col].dt.month_name()
+    df_temp['month_num'] = df_temp[date_col].dt.month
+    
+    # Resample for time-series
+    monthly_series = df_temp.set_index(date_col).resample("M")[amount_col].sum()
+    
+    # Calculate seasonality (Average spend per month name)
+    seasonality = df_temp.groupby(['month_num', 'month_name'])[amount_col].sum().reset_index()
+
+    print("\n📅 Monthly Spending Statistics:")
+    print(f"Average: ₹{monthly_series.mean():,.2f}")
+    print(f"Peak Month: {monthly_series.idxmax().strftime('%B %Y')} (₹{monthly_series.max():,.2f})")
+    print(f"Total Period Spend: ₹{monthly_series.sum():,.2f}")
+
+    # --- VISUALIZATION UPGRADE ---
+    fig, axes = plt.subplots(2, 2, figsize=(18, 12))
+    plt.subplots_adjust(hspace=0.4)
+
+    # 1. Trend Line (The 'Pulse' of spending)
+    axes[0, 0].plot(monthly_series.index, monthly_series.values, 
+                  marker="o", color='#2c3e50', linewidth=3, markersize=8, label='Total Spend')
+    axes[0, 0].fill_between(monthly_series.index, monthly_series.values, color='#3498db', alpha=0.2)
+    axes[0, 0].set_title("Timeline: Total Monthly Spend", fontsize=14, fontweight='bold')
+    axes[0, 0].grid(axis='y', linestyle='--', alpha=0.7)
+
+    # 2. Seasonality Bar Chart (Which months are naturally higher?)
+    sns.barplot(ax=axes[0, 1], data=seasonality, x='month_name', y=amount_col, palette="viridis")
+    axes[0, 1].set_title("Seasonality: Total Spend by Month Name", fontsize=14, fontweight='bold')
+    axes[0, 1].tick_params(axis='x', rotation=45)
+
+    # 3. Cumulative Spend (The 'Burn' rate)
+    axes[1, 0].step(monthly_series.index, monthly_series.cumsum(), where='post', color='#e74c3c', linewidth=3)
+    axes[1, 0].set_title("Cumulative Spending Growth", fontsize=14, fontweight='bold')
+    axes[1, 0].set_ylabel("Running Total (₹)")
+    axes[1, 0].grid(axis='both', alpha=0.3)
+
+    # 4. Boxplot (Spending volatility)
+    # Shows the distribution of transaction sizes per month to see if peaks are driven by 
+    # many small transactions or a few massive ones.
+    sns.boxplot(ax=axes[1, 1], data=df_temp, x=df_temp[date_col].dt.month, y=amount_col, palette="Set3")
+    axes[1, 1].set_title("Transaction Volatility per Month", fontsize=14, fontweight='bold')
+    axes[1, 1].set_yscale('log') # Log scale helps if you have huge outliers
+    axes[1, 1].set_xlabel("Month Number")
+
+    plt.suptitle("Comprehensive Temporal Spending Analysis", fontsize=20, fontweight='bold', y=0.95)
+    plt.show()
+
+    return monthly_series
+
+OUTPUT:
+No output captured.
