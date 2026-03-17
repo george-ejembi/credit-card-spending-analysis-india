@@ -1,0 +1,22 @@
+TITLE: STEP 15
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+# Select numerical columns for correlation analysis
+numeric_cols = df_clean.select_dtypes(include=['float64', 'int64']).columns
+
+if len(numeric_cols) > 1:
+    plt.figure(figsize=(10, 8))
+    correlation_matrix = df_clean[numeric_cols].corr()
+    sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0, 
+                square=True, linewidths=1, cbar_kws={"shrink": 0.8})
+    plt.title("Correlation Heatmap of Numerical Variables", fontweight="bold", fontsize=16)
+    plt.tight_layout()
+    plt.show()
+else:
+    print("⚠ Not enough numerical columns for correlation heatmap")
+
+OUTPUT:
+<Figure size 1000x800 with 2 Axes>
