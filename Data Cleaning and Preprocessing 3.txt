@@ -1,0 +1,14 @@
+TITLE: STEP 3
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+file_path = Path(
+    r"C:\Users\USER\Downloads\BIGFARMER DATABASE\Datasets!\Credit Card Spending in India.csv"
+)
+
+print(f"File path set to: {file_path}")
+
+OUTPUT:
+File path set to: C:\Users\USER\Downloads\BIGFARMER DATABASE\Datasets!\Credit Card Spending in India.csv
