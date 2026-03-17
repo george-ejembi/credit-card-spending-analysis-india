@@ -1,0 +1,43 @@
+TITLE: STEP 9
+
+DESCRIPTION:
+Code execution step from notebook.
+
+CODE:
+def analyze_monthly_trends(df, date_col, amount_col):
+    """Examines temporal spending trends on a monthly basis."""
+    # Use 'ME' instead of 'M' for month-end frequency in newer pandas versions
+    monthly_spending = df.set_index(date_col).resample("ME")[amount_col].sum()
+
+    print("\n📅 Monthly Spending Statistics:")
+    print(f"Average: ₹{monthly_spending.mean():,.2f}")
+    print(f"Maximum: ₹{monthly_spending.max():,.2f}")
+    print(f"Minimum: ₹{monthly_spending.min():,.2f}")
+    print(f"Total: ₹{monthly_spending.sum():,.2f}")
+
+    # Visualization
+    fig, axes = plt.subplots(1, 2, figsize=(16, 5))
+    
+    # Line plot
+    axes[0].plot(monthly_spending.index, monthly_spending.values, 
+                 marker="o", linewidth=2, markersize=8, color='darkblue')
+    axes[0].set_title("Monthly Credit Card Spending Trend", fontweight="bold", fontsize=14)
+    axes[0].set_ylabel("Total Amount (₹)")
+    axes[0].grid(alpha=0.3)
+    axes[0].tick_params(axis='x', rotation=45)
+    
+    # Bar plot
+    axes[1].bar(range(len(monthly_spending)), monthly_spending.values, 
+                color='teal', edgecolor='black')
+    axes[1].set_title("Monthly Spending Distribution", fontweight="bold", fontsize=14)
+    axes[1].set_ylabel("Total Amount (₹)")
+    axes[1].set_xlabel("Month Index")
+    axes[1].grid(axis='y', alpha=0.3)
+    
+    plt.tight_layout()
+    plt.show()
+
+    return monthly_spending
+
+OUTPUT:
+No output captured.
